@@ -5,40 +5,29 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sqlote_camera/connection.dart';
 import 'package:sqlote_camera/dataconnect.dart';
-import 'package:sqlote_camera/updateperson.dart';
+import 'package:sqlote_camera/main.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'connection.dart';
+import 'dataconnect.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+class updatePerson extends StatefulWidget {
+  int idd;
+  String named;
+  String aged;
+  String imagd;
+  updatePerson(
+      {Key? key,
+      required this.idd,
+      required this.named,
+      required this.aged,
+      required this.imagd})
+      : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<updatePerson> createState() => _updatePersonState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _updatePersonState extends State<updatePerson> {
   TextEditingController controllername = TextEditingController();
   TextEditingController controllerage = TextEditingController();
   File? _imag;
@@ -52,6 +41,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    controllername.text = widget.named;
+    controllerage.text = widget.aged;
+    _imag = File(widget.imagd);
     db = ConnectionDB();
     db.initalizeDB().whenComplete(() {
       setState(() {
@@ -127,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('Update'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -202,88 +194,83 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(left: 10.0, right: 10.0),
-              height: 600,
-              //color: Colors.blue,
-              child: FutureBuilder<List<Person>>(
-                future: _list,
-                builder: (context, AsyncSnapshot<List<Person>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError) {
-                    return const Center(
-                      child: Icon(Icons.info),
-                    );
-                  } else {
-                    var items = snapshot.data ?? <Person>[];
-                    return ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          //  var item = snapshot.data![index];
-                          _imag = File(items[index].img);
-                          return Dismissible(
-                            direction: DismissDirection.endToStart,
-                            //background: Container(color: Colors.red),
-                            key: ValueKey<int>(items[index].id),
-                            onDismissed: (DismissDirection direc) async {
-                              await ConnectionDB()
-                                  .deletePerson(items[index].id);
-                            },
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => updatePerson(
-                                              idd: items[index].id,
-                                              named: items[index].name,
-                                              aged: items[index].age,
-                                              imagd: items[index].img)));
-                                });
-                              },
-                              child: Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage: FileImage(_imag!),
-                                  ),
-                                  title: Text(
-                                    items[index].name,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                  subtitle: Text(items[index].age),
-                                ),
-                              ),
-                            ),
-                          );
-                        });
-                  }
+            ElevatedButton(
+                onPressed: () async {
+                  await ConnectionDB()
+                      .updatePerson(Person(
+                          id: widget.idd,
+                          name: controllername.text,
+                          age: controllerage.text,
+                          img: _imag!.path))
+                      .whenComplete(() {
+                    setState(() {
+                      print('update sucess');
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MyHomePage(
+                                  title: 'Flutter Demo Home Page')),
+                          (route) => false);
+                    });
+                  });
                 },
-              ),
-            ),
+                child: Text('Update'))
+            // Container(
+            //   margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+            //   height: 600,
+            //   //color: Colors.blue,
+            //   child: FutureBuilder<List<Person>>(
+            //     future: _list,
+            //     builder: (context, AsyncSnapshot<List<Person>> snapshot) {
+            //       if (snapshot.connectionState == ConnectionState.waiting) {
+            //         return const Center(
+            //           child: CircularProgressIndicator(),
+            //         );
+            //       } else if (snapshot.hasError) {
+            //         return const Center(
+            //           child: Icon(Icons.info),
+            //         );
+            //       } else {
+            //         var items = snapshot.data ?? <Person>[];
+            //         return ListView.builder(
+            //             itemCount: items.length,
+            //             itemBuilder: (context, index) {
+            //               //  var item = snapshot.data![index];
+            //               _imag = File(items[index].img);
+            //               return Dismissible(
+            //                 direction: DismissDirection.endToStart,
+            //                 //background: Container(color: Colors.red),
+            //                 key: ValueKey<int>(items[index].id),
+            //                 onDismissed: (DismissDirection direc) async {
+            //                   await ConnectionDB()
+            //                       .deletePerson(items[index].id);
+            //                 },
+            //                 child: InkWell(
+            //                   onTap: () {
+            //                     setState(() {});
+            //                   },
+            //                   child: Card(
+            //                     child: ListTile(
+            //                       leading: CircleAvatar(
+            //                         backgroundImage: FileImage(_imag!),
+            //                       ),
+            //                       title: Text(
+            //                         items[index].name,
+            //                         style: const TextStyle(fontSize: 20),
+            //                       ),
+            //                       subtitle: Text(items[index].age),
+            //                     ),
+            //                   ),
+            //                 ),
+            //               );
+            //             });
+            //       }
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await ConnectionDB()
-              .insertPerson(Person(
-                  id: Random().nextInt(200),
-                  name: controllername.text,
-                  age: controllerage.text,
-                  img: _imag!.path))
-              .whenComplete(() {
-            setState(() {
-              print('Inser Success');
-              _onRefresh();
-            });
-          });
-        },
-        child: const Icon(Icons.save),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

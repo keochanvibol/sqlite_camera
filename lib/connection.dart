@@ -37,4 +37,15 @@ class ConnectionDB {
     await db.insert(table, person.toMap());
     print('Insert Person');
   }
+
+  Future<void> deletePerson(int id) async {
+    final db = await initalizeDB();
+    await db.delete(table, where: 'id=?', whereArgs: [id]);
+  }
+
+  Future<void> updatePerson(Person person) async {
+    final db = await initalizeDB();
+    await db
+        .update(table, person.toMap(), where: 'id=?', whereArgs: [person.id]);
+  }
 }
