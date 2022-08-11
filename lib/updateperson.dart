@@ -215,59 +215,6 @@ class _updatePersonState extends State<updatePerson> {
                   });
                 },
                 child: Text('Update'))
-            // Container(
-            //   margin: const EdgeInsets.only(left: 10.0, right: 10.0),
-            //   height: 600,
-            //   //color: Colors.blue,
-            //   child: FutureBuilder<List<Person>>(
-            //     future: _list,
-            //     builder: (context, AsyncSnapshot<List<Person>> snapshot) {
-            //       if (snapshot.connectionState == ConnectionState.waiting) {
-            //         return const Center(
-            //           child: CircularProgressIndicator(),
-            //         );
-            //       } else if (snapshot.hasError) {
-            //         return const Center(
-            //           child: Icon(Icons.info),
-            //         );
-            //       } else {
-            //         var items = snapshot.data ?? <Person>[];
-            //         return ListView.builder(
-            //             itemCount: items.length,
-            //             itemBuilder: (context, index) {
-            //               //  var item = snapshot.data![index];
-            //               _imag = File(items[index].img);
-            //               return Dismissible(
-            //                 direction: DismissDirection.endToStart,
-            //                 //background: Container(color: Colors.red),
-            //                 key: ValueKey<int>(items[index].id),
-            //                 onDismissed: (DismissDirection direc) async {
-            //                   await ConnectionDB()
-            //                       .deletePerson(items[index].id);
-            //                 },
-            //                 child: InkWell(
-            //                   onTap: () {
-            //                     setState(() {});
-            //                   },
-            //                   child: Card(
-            //                     child: ListTile(
-            //                       leading: CircleAvatar(
-            //                         backgroundImage: FileImage(_imag!),
-            //                       ),
-            //                       title: Text(
-            //                         items[index].name,
-            //                         style: const TextStyle(fontSize: 20),
-            //                       ),
-            //                       subtitle: Text(items[index].age),
-            //                     ),
-            //                   ),
-            //                 ),
-            //               );
-            //             });
-            //       }
-            //     },
-            //   ),
-            // ),
           ],
         ),
       ),

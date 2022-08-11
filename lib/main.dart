@@ -65,6 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _list = db.getPerson();
       Future.delayed(const Duration(seconds: 5));
+      controllerage.clear();
+      controllername.clear();
     });
   }
 
